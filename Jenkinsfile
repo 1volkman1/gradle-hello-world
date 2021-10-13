@@ -7,17 +7,17 @@ node('slave1') {
          stage ('Build Gradle'){
            def gradleHome = tool 'gradle4'
            sh "${gradleHome}/bin/gradle build"
-         }
+           }
    	} 
    catch (ex) {
 		echo "Some failed"
 	}
    stage ('post'){
         if ( currentBuild.result == 'SUCCESS') {
-          addBadge(text: 'Build Success')
+          addBadge(icon: 'completed.gif', text: 'Build Success')
         }
         if (currentBuild.result == 'FAILURE') {
-          addBadge(text: 'Build Faiure')
+          addBadge(icon: 'error.gif',text: 'Build Faiure')
          }
    }
 }
