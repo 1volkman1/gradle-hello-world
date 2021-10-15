@@ -7,7 +7,6 @@ pipeline{
            gradle 'gradle4'
         }
    stages {
-       try {
          stage ('Checkout'){
 		 steps{
 		    checkout scm
@@ -19,18 +18,13 @@ pipeline{
 		 }
            }
    	} 
-       catch (ex) {
-		echo "Some failed"
-	}
-         stage ('post'){
-		 steps{
-                    if ( currentBuild.result == 'SUCCESS') {
+        post{
+		 success {
                         addBadge(icon: 'completed.gif', text: 'Build Success')
                        }
-                    if (currentBuild.result == 'FAILURE') {
+                 failure {
                        addBadge(icon: 'error.gif',text: 'Build Faiure')
                        }
-		 }
+            }
          }
-   }
 }
