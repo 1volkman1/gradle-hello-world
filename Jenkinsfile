@@ -26,5 +26,4 @@ pipeline{
                        addBadge(icon: 'error.gif',text: 'Build Faiure')
                        }
             }
-         }
 }
