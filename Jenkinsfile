@@ -1,23 +1,36 @@
 #!groovy
-node('slave1') {
-   try {
+pipline{
+    agent {
+    label 'slave1'
+    }
+       tools {
+           gradle 'gradle4'
+        }
+   stages {
+       try {
          stage ('Checkout'){
-            checkout scm      
+		 steps{
+		    checkout scm
+		 }
          }
          stage ('Build Gradle'){
-           def gradleHome = tool 'gradle4'
-           sh "${gradleHome}/bin/gradle build"
+		 steps{
+                   sh "gradle build"
+		 }
            }
    	} 
-   catch (ex) {
+       catch (ex) {
 		echo "Some failed"
 	}
-   stage ('post'){
-        if ( currentBuild.result == 'SUCCESS') {
-          addBadge(icon: 'completed.gif', text: 'Build Success')
-        }
-        if (currentBuild.result == 'FAILURE') {
-          addBadge(icon: 'error.gif',text: 'Build Faiure')
+         stage ('post'){
+		 steps{
+                    if ( currentBuild.result == 'SUCCESS') {
+                        addBadge(icon: 'completed.gif', text: 'Build Success')
+                       }
+                    if (currentBuild.result == 'FAILURE') {
+                       addBadge(icon: 'error.gif',text: 'Build Faiure')
+                       }
+		 }
          }
    }
 }
