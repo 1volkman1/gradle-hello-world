@@ -1,47 +1,56 @@
-#!groovy
 pipeline{
     agent {
-    label 'slave1'
+       label 'slave1'
     }
-       tools {
+    tools {
            gradle 'gradle4'
         }
    stages {
-         stage ('Checkout'){
+      stage ('Checkout'){
 		 steps{
 		    checkout scm
 		 }
-         }
-         stage ('Build Gradle'){
+      }
+      stage ('Build Gradle'){
 		 steps{
-                   sh "gradle build"
+            sh "gradle clean build"
 		 }
-           }
-   	}
-	stage ('Unit test'){
-		steps{
+      }
+	  stage ('Unit test'){
+		 steps{
 		   sh "gradle test"
 		}
-	}
-	stage ('func-test'){
-		paralles{
-		    steps{
-			  sh "test-data/int-test.shbuild/libs/oto-gradle-1.0.jar igor 'Hello Igor!'"
+	  }
+	  stage ('func-test'){
+		parallel{
+		    stage('one'){
+		      steps{
+			    sh "sh test-data/int-test.sh build/libs/oto-gradle-1.0.jar igor 'Hello Igor!'"
+		      }
 		    }
-		    steps{
-			  sh "test-data/int-test.shbuild/libs/oto-gradle-1.0.jar myTest 'Hello MyTest!'"  
+		    stage('two'){
+		      steps{
+			    sh "sh test-data/int-test.sh build/libs/oto-gradle-1.0.jar Playtika 'Hello Playtika!'"  
+		      }
 		    }
-		    steps{
-			  sh "test-data/int-test.shbuild/libs/oto-gradle-1.0.jar 123 'Hello 123!'"  
+		    stage('three'){
+		      steps{
+			    sh "sh test-data/int-test.sh build/libs/oto-gradle-1.0.jar 123 'Hello 123!'"  
+		      }
 		    }
 		}
-	      }
+	  }
+   }
         post{
 		 success {
-                        addBadge(icon: 'completed.gif', text: 'Build Success')
-                       }
-                 failure {
-                       addBadge(icon: 'error.gif',text: 'Build Faiure')
-                       }
+            addBadge(icon: 'completed.gif', text: 'Build Success')
+         }
+         failure {
+            addBadge(icon: 'error.gif',text: 'Build Faiure')
+         }
+         always {
+            junit "build/test-results/junit-platform/*.xml"
+            deleteDir()
+         }
             }
 }
