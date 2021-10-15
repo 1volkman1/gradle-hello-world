@@ -23,8 +23,8 @@ pipeline{
 		   sh "gradle test"
 		}
 	}
-	parallel{
-	    stage ('func-test'){
+	stage ('func-test'){
+		paralles{
 		    steps{
 			  sh "test-data/int-test.shbuild/libs/oto-gradle-1.0.jar igor 'Hello Igor!'"
 		    }
@@ -34,8 +34,8 @@ pipeline{
 		    steps{
 			  sh "test-data/int-test.shbuild/libs/oto-gradle-1.0.jar 123 'Hello 123!'"  
 		    }
+		}
 	      }
-	}
         post{
 		 success {
                         addBadge(icon: 'completed.gif', text: 'Build Success')
